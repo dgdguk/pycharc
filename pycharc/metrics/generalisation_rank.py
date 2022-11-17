@@ -16,7 +16,7 @@ from .registry import register
 
 
 @register('GR')
-def generalisation_rank(system: System, source: SourceType=random_source):
+def generalisation_rank(system: System, source: SourceType=random_source, threshold=0.1):
     """Generalisation Rank, as implemented in CHARC"""
     num_timesteps = int(system.total_units * 1.5 + 0.5) + system.wash_out
     n_input_units = system.input_units
@@ -24,5 +24,5 @@ def generalisation_rank(system: System, source: SourceType=random_source):
     input_signal = system.preprocess(input_signal)
     output = system.run(input_signal)
     np.nan_to_num(output, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
-    gr = matrix_rank(output)
+    gr = matrix_rank(output, tol=threshold)
     return gr
