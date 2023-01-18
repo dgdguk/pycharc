@@ -28,14 +28,15 @@ class KNNFitness:
 
     def __call__(self, population: List[GAIndividual], metrics: Dict[Hashable, npt.NDArray[np.floating]], entry: int) -> float:
         """Calculate the KNN fitness function for the given k value"""
-        assert len(population) > self.k_value
+        if self.k_value <= 0: raise ValueError(f'KNNFitness K Value ({self.k_value}) must be greater than 0')
+        elif self.k_value > len(population): raise ValueError('KNNFitness K Value ({self.k_value}) must be less than the size of the population ({len(population)})')
         individual = population[entry]
         individual_metrics = metrics[individual.params]
         distances = [
             (np.linalg.norm(individual_metrics - metrics[other.params]),
             other) for other in population if other is not individual]
         distances.sort()
-        return float(distances[self.k_value][0])
+        return float(distances[self.k_value - 1][0])
         
 
 @dataclass
